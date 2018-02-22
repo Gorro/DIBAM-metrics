@@ -1,0 +1,59 @@
+<form action="{{url('/getUsers')}}" style="width:100%">
+    <div class="col-12 form-row">
+        <div class="col animated fadeIn">
+            <select name="seleccion[]" class="mdb-select " multiple searchable="Selecciona">
+                <option value="" disabled selected>Selecciona</option>
+                <option value="1">Usuarios Certificados</option>
+                <option value="2">Sesiones de Usuario</option>
+                <option value="3">Usuarios Registrados</option>
+            </select>
+        </div>
+        <div class="col animated fadeIn">
+            <select id="region" name="region" class="mdb-select" onchange="getLabs($(this).val())">
+                <option value="" disabled selected>Regiones</option>
+                @foreach ($regiones as $lab)
+                    <option value="{{$lab->region}}">{{$lab->region}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col animated fadeIn">
+            <select class="mdb-select" id="recintos" name="recinto" >
+                <option value="" disabled selected>Recintos</option>
+            </select>
+        </div>
+        <div class="col animated fadeIn">
+            <div class="md-form">
+                <input placeholder="Fecha Inicio" name="fecha_inicio" type="text" id="startDate" class="form-control datepicker">
+            </div>
+        </div>
+        <div class="col animated fadeIn">
+            <div class="md-form">
+                <input placeholder="Fecha Termino" type="text" name="fecha_termino" id="endDate" class="form-control datepicker">
+            </div>
+        </div>
+        <div class="clear-fix"></div>
+        <div class="col animated fadeIn">
+            <input type="submit" class="btn btn-default" value="Buscar">
+        </div>
+    </div>
+</form>
+<table id="example" class="table table-striped table-bordered table-responsive-md" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th>Rut</th>
+        <th>Nombre</th>
+        <th>Laboratorio</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach($capacitados as $capacitado)
+        @if(!is_null($capacitado->usuario))
+            <tr>
+                <td>{{ number_format( substr ( $capacitado->usuario->rut, 0 , -1 ) , 0, "", ".") . '-' . substr ( $capacitado->usuario->rut, strlen($capacitado->usuario->rut) -1 , 1 ) }}</td>
+                <td>{{$capacitado->usuario->fullname}}</td>
+                <td>{{$capacitado->usuario->lab->laboratorio}}</td>
+            </tr>
+        @endif
+    @endforeach
+    </tbody>
+</table>
