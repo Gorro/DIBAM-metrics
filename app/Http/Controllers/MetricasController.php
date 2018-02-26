@@ -17,7 +17,7 @@ class MetricasController extends Controller
     public function index()
     {
         $capacitados = AvanceCursos::capacitados()->count();
-        $sesionesUsuario =LaboratoriosBiblioredes::with('sesiones')->get();
+        $sesionesUsuario = LaboratoriosBiblioredes::with('sesiones')->get();
         $cantidadSesiones = 0;
         foreach ($sesionesUsuario as $recinto) {
             $cantidad = count($recinto->sesiones);
@@ -30,12 +30,17 @@ class MetricasController extends Controller
     }
     public function form(Request $request)
     {
-        $result = [];
+        $result = [
+            'user' => true
+        ];
         if($request->tipo == 0){
-            $result['capacitados'] = AvanceCursos::with('usuario.lab')->capacitados()->get();
+            $result['usuarios'] = AvanceCursos::with('usuario.lab')->capacitados()->get();
         } elseif ( $request->tipo == 1){
-
-        }elseif ( $request->tipo == 1 ){
+            $result = [
+                'recintos' => LaboratoriosBiblioredes::with('sesiones')->get(),
+                'user' => false
+            ];
+        }elseif ( $request->tipo == 2 ){
 
         }
         $result['regiones']  = LaboratoriosBiblioredes::getRegiones();
@@ -50,17 +55,43 @@ class MetricasController extends Controller
     public function getLabs(Request $request){
         return LaboratoriosBiblioredes::getLaboratoriosRegion($request->input('region'));
     }
-
     public function getUsers(Request $request)
     {
-        $termino = \DateTime::createFromFormat('d/m/Y', $request->fecha_termino)->format('Y-m-d');
-        $inicio = \DateTime::createFromFormat('d/m/Y', $request->fecha_inicio)->format('Y-m-d');
-        $result['capacitados'] = AvanceCursos::with('usuario.lab')
-            ->capacitados()
-            ->whereRaw("DATE(fecha_inicio) BETWEEN '$inicio' and '$termino'")
-            ->whereHas('usuario.lab',function($query) use ($request){
-            $query->where('id',$request->recinto);
-        });
-        dd($result['capacitados']->get());
+        $result = [
+            'user' => true
+        ];
+
+        if($request->seleccion == 1){
+            $result['usuarios'] = AvanceCursos::with('usuario.lab')->capacitados();
+            if( !(empty($request->fecha_inicio) && empty($request->fecha_termino)) ){
+                $termino = \DateTime::createFromFormat('d/m/Y', $request->fecha_termino)->format('Y-m-d');
+                $inicio = \DateTime::createFromFormat('d/m/Y', $request->fecha_inicio)->format('Y-m-d');
+                $result['usuarios'] = $result['usuarios']->whereRaw("DATE(fecha_inicio) BETWEEN '$inicio' and '$termino'");
+            }
+            if($request->has('region')){
+                $result['usuarios'] = $result['usuarios']->whereHas('usuario.lab',function($query) use ($request){
+                    $query->where('region',$request->region);
+                });
+            }
+            if($request->has('recinto')){
+                $result['usuarios'] = $result['usuarios']->whereHas('usuario.lab',function($query) use ($request){
+                    $query->where('id',$request->recinto);
+                });
+            }
+            $result['usuarios'] = $result['usuarios']->get();
+        }
+        if($request->seleccion == 2){
+            $result = [
+                'recintos' => LaboratoriosBiblioredes::with('sesiones.usuario')
+                ->where('id',$request->recinto)
+                ->whereHas('sesiones', function($query) use ($inicio,$termino){
+                    $query->whereRaw("DATE(fecha_session) BETWEEN '$inicio' and '$termino'");
+                })
+                ->get(),
+                'user' => false
+            ];
+        }
+
+        return view('metricas.adminMaterial.tables.table',$result);
     }
 }

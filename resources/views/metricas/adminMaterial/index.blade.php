@@ -109,7 +109,7 @@
                         <h4>Sesiones de usuarios</h4>
                         <hr>
                         <!--Quotation-->
-                        <div class="text-center"><button type="button" class="btn btn-primary">Ver</button></div>
+                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="ver(1)">Ver</button></div>
                     </div>
                 </div>
                 <!--/.Card-->
@@ -163,6 +163,7 @@
 <script>
     load = $('#load');
     load.hide();
+    var dataTable = '';
     var ver = function($tipo){
         load.show();
         $('#index').addClass('animated fadeOut');
@@ -179,15 +180,7 @@
                         $('#form').html(view);
                         $('select').addClass('mdb-select');
                         $('.mdb-select').material_select();
-                        $('.datepickerInicio').pickadate({
-                            firstDay: 1,
-                            format: 'dd-mm-yyyy'
-                        });
-                        $('.datepickerFin').pickadate({
-                            firstDay: 1,
-                            format: 'dd-mm-yyyy'
-                        });
-                        $('#example').DataTable({
+                        dataTable = $('#example').DataTable({
                             "language": {
                             "sProcessing":     "Procesando...",
                             "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -231,6 +224,10 @@
                                 $('#endDate').val('');
                             }
                         });
+                        $('#search').submit(function(e){
+                            e.preventDefault();
+                            getSearch($(this));
+                        });
                     },
                     error: function (data) {
                         //
@@ -267,6 +264,49 @@
                 $("#recintos").material_select();
             }
         })
+    }
+    var getSearch = function($form){
+        load.show();
+        dataTable.destroy();
+        $('#table_search').html('');
+        $.ajax({
+            url:"{{url('/getUsers')}}",
+            type: 'GET',
+            data : $form.serialize(),
+            success: function (view) {
+                $('#table_search').html(view);
+                load.hide();
+                dataTable = $('#example').DataTable({
+                    "language": {
+                        "sProcessing":     "Procesando...",
+                        "sLengthMenu":     "Mostrar _MENU_ registros",
+                        "sZeroRecords":    "No se encontraron resultados",
+                        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                        "sInfoPostFix":    "",
+                        "sSearch":         "Buscar:",
+                        "sUrl":            "",
+                        "sInfoThousands":  ",",
+                        "sLoadingRecords": "Cargando...",
+                        "oPaginate": {
+                            "sFirst":    "Primero",
+                            "sLast":     "Último",
+                            "sNext":     "Siguiente",
+                            "sPrevious": "Anterior"
+                        },
+                        "oAria": {
+                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                        }
+                    },
+                    "bLengthChange": false,
+                    "sDom": '<"bottom"fl>rt<"top"ip><"clear">',
+                    'bSort': false
+                });
+            }
+        });
     }
 </script>
 </body>

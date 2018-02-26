@@ -1,7 +1,7 @@
-<form action="{{url('/getUsers')}}" style="width:100%">
+<form action="{{url('/getUsers')}}" style="width:100%" id="search">
     <div class="col-12 form-row">
         <div class="col animated fadeIn">
-            <select name="seleccion[]" class="mdb-select " multiple searchable="Selecciona">
+            <select name="seleccion" class="mdb-select">
                 <option value="" disabled selected>Selecciona</option>
                 <option value="1">Usuarios Certificados</option>
                 <option value="2">Sesiones de Usuario</option>
@@ -37,23 +37,6 @@
         </div>
     </div>
 </form>
-<table id="example" class="table table-striped table-bordered table-responsive-md" cellspacing="0" width="100%">
-    <thead>
-    <tr>
-        <th>Rut</th>
-        <th>Nombre</th>
-        <th>Laboratorio</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach($capacitados as $capacitado)
-        @if(!is_null($capacitado->usuario))
-            <tr>
-                <td>{{ number_format( substr ( $capacitado->usuario->rut, 0 , -1 ) , 0, "", ".") . '-' . substr ( $capacitado->usuario->rut, strlen($capacitado->usuario->rut) -1 , 1 ) }}</td>
-                <td>{{$capacitado->usuario->fullname}}</td>
-                <td>{{$capacitado->usuario->lab->laboratorio}}</td>
-            </tr>
-        @endif
-    @endforeach
-    </tbody>
-</table>
+<div id="table_search">
+    @include('metricas.adminMaterial.tables.table')
+</div>

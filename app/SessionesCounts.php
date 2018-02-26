@@ -11,7 +11,7 @@ class SessionesCounts extends Model
 
     public function usuario()
     {
-        return $this->belongsTo('UsuarioRecintos', 'id_usuario_recinto');
+        return $this->belongsTo(UsuarioRecintos::class, 'id_usuario_recinto');
     }
 
 }
