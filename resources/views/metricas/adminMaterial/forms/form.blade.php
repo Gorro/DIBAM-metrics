@@ -1,7 +1,7 @@
 <form action="{{url('/getUsers')}}" style="width:100%" id="search">
     <div class="col-12 form-row">
         <div class="col animated fadeIn">
-            <select name="seleccion" class="mdb-select">
+            <select name="seleccion" class="mdb-select" id="selecciona">
                 <option value="" disabled selected>Selecciona</option>
                 <option value="1">Usuarios Certificados</option>
                 <option value="2">Sesiones de Usuario</option>

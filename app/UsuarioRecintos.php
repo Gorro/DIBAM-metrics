@@ -27,4 +27,9 @@ class UsuarioRecintos extends Model
     {
         return $this->hasMany(AvanceCursos::class, 'id_usuario_recinto');
     }
+
+    public function capacitado()
+    {
+        return $this->hasMany(AvanceCursos::class, 'id_usuario_recinto')->where('id_curso',8);
+    }
 }

@@ -89,7 +89,7 @@
                         <h4>Usuarios Certificados</h4>
                         <hr>
                         <!--Quotation-->
-                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="ver(0)">Ver</button></div>
+                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="ver(1)">Ver</button></div>
                     </div>
                 </div>
                 <!--/.Card-->
@@ -109,7 +109,7 @@
                         <h4>Sesiones de usuarios</h4>
                         <hr>
                         <!--Quotation-->
-                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="ver(1)">Ver</button></div>
+                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="ver(2)">Ver</button></div>
                     </div>
                 </div>
                 <!--/.Card-->
@@ -153,6 +153,7 @@
 <script type="text/javascript" src="{{ asset('mdb/js/mdb.min.js')}}"></script>
 <script type="text/javascript" src="{{ asset('js/bootstrap-datepicker.js')}}"></script>
 <script type="text/javascript" src="{{ asset('js/locales/bootstrap-datepicker.es.js') }}" charset="UTF-8"></script>
+<script type="text/javascript" src="{{ asset('js/datatable.options.js') }}" charset="UTF-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
 
 <!-- MDB DataTables -->
@@ -173,46 +174,18 @@
                 $.ajax({
                     url:"{{url('/form')}}",
                     type: 'GET',
-                    data : {tipo : $tipo},
+                    data : {seleccion : $tipo},
                     success: function (view) {
                         load.hide();
                         $('#formAjax').css('margin-top','5vh')
                         $('#form').html(view);
+                        $('#selecciona').val($('#seleccion').val());
                         $('select').addClass('mdb-select');
                         $('.mdb-select').material_select();
-                        dataTable = $('#example').DataTable({
-                            "language": {
-                            "sProcessing":     "Procesando...",
-                            "sLengthMenu":     "Mostrar _MENU_ registros",
-                            "sZeroRecords":    "No se encontraron resultados",
-                            "sEmptyTable":     "Ningún dato disponible en esta tabla",
-                            "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                            "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-                            "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-                            "sInfoPostFix":    "",
-                            "sSearch":         "Buscar:",
-                            "sUrl":            "",
-                            "sInfoThousands":  ",",
-                            "sLoadingRecords": "Cargando...",
-                            "oPaginate": {
-                                "sFirst":    "Primero",
-                                "sLast":     "Último",
-                                "sNext":     "Siguiente",
-                                "sPrevious": "Anterior"
-                            },
-                            "oAria": {
-                                "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-                                "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                            }
-                        },
-                            "bLengthChange": false,
-                            "sDom": '<"bottom"fl>rt<"top"ip><"clear">',
-                            'bSort': false
-                        });
+                        dataTable = $('#example').DataTable(optionsDataTable);
                         $('.dataTables_wrapper').find('label').each(function() {
                             $(this).parent().append($(this).children());
                         });
-                        ;
                         $('.datepicker').datepicker({
                             language:'es',
                             autoclose:true,
@@ -276,35 +249,8 @@
             success: function (view) {
                 $('#table_search').html(view);
                 load.hide();
-                dataTable = $('#example').DataTable({
-                    "language": {
-                        "sProcessing":     "Procesando...",
-                        "sLengthMenu":     "Mostrar _MENU_ registros",
-                        "sZeroRecords":    "No se encontraron resultados",
-                        "sEmptyTable":     "Ningún dato disponible en esta tabla",
-                        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-                        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-                        "sInfoPostFix":    "",
-                        "sSearch":         "Buscar:",
-                        "sUrl":            "",
-                        "sInfoThousands":  ",",
-                        "sLoadingRecords": "Cargando...",
-                        "oPaginate": {
-                            "sFirst":    "Primero",
-                            "sLast":     "Último",
-                            "sNext":     "Siguiente",
-                            "sPrevious": "Anterior"
-                        },
-                        "oAria": {
-                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                        }
-                    },
-                    "bLengthChange": false,
-                    "sDom": '<"bottom"fl>rt<"top"ip><"clear">',
-                    'bSort': false
-                });
+                dataTable = $('#example').DataTable(optionsDataTable);
+
             }
         });
     }
