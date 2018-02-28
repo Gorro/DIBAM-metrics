@@ -201,6 +201,8 @@
                             e.preventDefault();
                             getSearch($(this));
                         });
+
+                        exportExcel($('#search'));
                     },
                     error: function (data) {
                         //
@@ -250,9 +252,14 @@
                 $('#table_search').html(view);
                 load.hide();
                 dataTable = $('#example').DataTable(optionsDataTable);
-
+                exportExcel($form);
             }
         });
+    }
+    var exportExcel = function($form){
+        var url = "{{url('/eportexcel')}}?"+$form.serialize();
+        $('#excel').attr('href',url);
+        $('#excel').trigger('click');
     }
 </script>
 </body>

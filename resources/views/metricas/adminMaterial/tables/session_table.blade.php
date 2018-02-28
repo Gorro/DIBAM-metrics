@@ -1,3 +1,6 @@
+<div class="col-12">
+    <a href="" class="btn btn-primary pull-right" id="excel">Exportar Excel</a>
+</div>
 <table id="example" class="table table-striped table-bordered table-responsive-md" cellspacing="0" width="100%">
     <thead>
     <tr>

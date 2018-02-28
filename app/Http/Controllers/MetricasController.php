@@ -122,4 +122,40 @@ class MetricasController extends Controller
         }
         return $result['recintos']->get();
     }
+
+    public function exportExcel(Request $request)
+    {
+        if($request->seleccion == 1){
+            $usuarios = $this->showUsers($request);
+
+            \Excel::create('users', function($excel) use ($usuarios)  {
+                $excel->sheet('Sheet 1', function($sheet) use ($usuarios){
+                    $export = [
+                        'Rut' => [],
+                        'Nombre' => [],
+                        'Laboratorio' => []
+                    ];
+                    $sheet->loadView('metricas.adminMaterial.tables.user_table_excel', ['usuarios' => $usuarios]);
+                    $sheet->freezeFirstRow();
+                });
+            })->export('xls');
+        }
+        if($request->seleccion == 2){
+            $recintos = $this->showLabs($request);
+
+            \Excel::create('users', function($excel) use ($recintos)  {
+                $excel->sheet('Sheet 1', function($sheet) use ($recintos){
+                    $export = [
+                        'Rut' => [],
+                        'Nombre' => [],
+                        'Laboratorio' => []
+                    ];
+                    $sheet->loadView('metricas.adminMaterial.tables.session_table_excel', ['recintos' => $recintos]);
+
+                    $sheet->freezeFirstRow();
+                });
+            })->export('xls');
+        }
+
+    }
 }
