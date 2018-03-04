@@ -125,11 +125,11 @@
                     </div>
                     <div class="card-body">
                         <!--Name-->
-                        <h4 class="card-title">2000</h4>
+                        <h4 class="card-title">{{ $totalUsuarios }}</h4>
                         <h4>Usuarios Registrados</h4>
                         <hr>
                         <!--Quotation-->
-                        <div class="text-center"><button type="button" class="btn btn-primary">Ver</button></div>
+                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="ver(3)">Ver</button></div>
                     </div>
                 </div>
                 <!--/.Card-->
@@ -165,6 +165,7 @@
     load = $('#load');
     load.hide();
     var dataTable = '';
+
     var ver = function($tipo){
         load.show();
         $('#index').addClass('animated fadeOut');
@@ -203,6 +204,7 @@
                         });
 
                         exportExcel($('#search'));
+                        formFunctions();
                     },
                     error: function (data) {
                         //
@@ -210,6 +212,7 @@
                 });
             }, 1000);
     }
+
     var getLabs = function($region){
         $('html, body').css({
             overflow: 'hidden',
@@ -240,7 +243,12 @@
             }
         })
     }
+
     var getSearch = function($form){
+        if($('#startDate').val() != '' && $('#endDate').val() == ''){
+            toastr.error('Debe seleccionar la fecha de termino');
+            return false;
+        }
         load.show();
         dataTable.destroy();
         $('#table_search').html('');
@@ -256,10 +264,21 @@
             }
         });
     }
+
     var exportExcel = function($form){
         var url = "{{url('/eportexcel')}}?"+$form.serialize();
         $('#excel').attr('href',url);
         $('#excel').trigger('click');
+    }
+
+    var formFunctions = function(){
+        $('#selecciona').change(function(){
+           if($(this).val() == 3){
+               $('#startDate, #endDate').addClass('d-none').val('');
+           } else {
+               $('#startDate, #endDate').removeClass('d-none');
+           }
+        });
     }
 </script>
 </body>
