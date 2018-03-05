@@ -58,7 +58,7 @@ class MetricasController extends Controller
                         'Nombre' => [],
                         'Laboratorio' => []
                     ];
-                    $sheet->loadView('metricas.adminMaterial.tables.user_table_excel', ['usuarios' => $usuarios, 'cretificado' =>true]);
+                    $sheet->loadView('metricas.adminMaterial.tables.user_table_excel', ['usuarios' => $usuarios, 'certificado' =>true]);
                     $sheet->freezeFirstRow();
                 });
             })->export('xls');
