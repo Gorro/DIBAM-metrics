@@ -21,7 +21,14 @@
                 <option value="" disabled selected>Recintos</option>
             </select>
         </div>
-
+        <div class="col animated fadeIn">
+            <select name="ano" class="mdb-select" id="ano">
+                <option value="" selected>Selecciona año</option>
+                @for( $ano = 2017; $ano <= date('Y'); $ano++)
+                    <option value="{{$ano}}">{{$ano}}</option>
+                @endfor
+            </select>
+        </div>
         <div class="col animated fadeIn">
             <div class="md-form">
                 <input placeholder="Fecha Inicio" name="fecha_inicio" type="text" id="startDate" class="form-control datepicker @if($seleccion == 3) d-none @endif">

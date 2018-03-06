@@ -51,8 +51,8 @@ class MetricasController extends Controller
         if($request->seleccion == 1){
             $usuarios = $this->showUsersTrained($request);
 
-            \Excel::create('users', function($excel) use ($usuarios)  {
-                $excel->sheet('Sheet 1', function($sheet) use ($usuarios){
+            \Excel::create('Usuarios_Certificados', function($excel) use ($usuarios)  {
+                $excel->sheet('Hoja 1', function($sheet) use ($usuarios){
                     $export = [
                         'Rut' => [],
                         'Nombre' => [],
@@ -66,8 +66,8 @@ class MetricasController extends Controller
         if($request->seleccion == 2){
             $recintos = $this->showLabs($request);
 
-            \Excel::create('users', function($excel) use ($recintos)  {
-                $excel->sheet('Sheet 1', function($sheet) use ($recintos){
+            \Excel::create('Sesiones_por_Recinto', function($excel) use ($recintos)  {
+                $excel->sheet('Hoja 1', function($sheet) use ($recintos){
                     $export = [
                         'Rut' => [],
                         'Nombre' => [],
@@ -82,8 +82,8 @@ class MetricasController extends Controller
         if($request->seleccion == 3){
             $usuarios = $this->showUsers($request);
 
-            \Excel::create('users', function($excel) use ($usuarios)  {
-                $excel->sheet('Sheet 1', function($sheet) use ($usuarios){
+            \Excel::create('Usuarios_Registrados', function($excel) use ($usuarios)  {
+                $excel->sheet('Hoja 1', function($sheet) use ($usuarios){
                     $export = [
                         'Rut' => [],
                         'Nombre' => [],
