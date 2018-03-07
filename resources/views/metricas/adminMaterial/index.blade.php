@@ -54,11 +54,8 @@
             opacity: 0.5;
             z-index: 1000;
         }
-        #accordion{
-            width: 100%;
-        }
-        .sorting_asc{
-            z-index: -1;
+        .col-12{
+            position: static !important;
         }
     </style>
 
@@ -248,6 +245,9 @@
         if($('#startDate').val() != '' && $('#endDate').val() == ''){
             toastr.error('Debe seleccionar la fecha de termino');
             return false;
+        } else if($('#startDate').val() == '' && $('#endDate').val() != ''){
+            toastr.error('Debe seleccionar la fecha de inicio');
+            return false;
         }
         load.show();
         dataTable.destroy();
@@ -274,6 +274,15 @@
     var formFunctions = function(){
         $('#selecciona').change(function(){
            if($(this).val() == 3){
+               $('#startDate, #endDate').addClass('d-none').val('');
+               $('#ano').val(0).material_select('destroy');
+           } else if($('#ano').val() == 0){
+               $('#startDate, #endDate').removeClass('d-none');
+               $('#ano').material_select();
+           }
+        });
+        $('#ano').change(function(){
+           if($(this).val() != 0){
                $('#startDate, #endDate').addClass('d-none').val('');
            } else {
                $('#startDate, #endDate').removeClass('d-none');

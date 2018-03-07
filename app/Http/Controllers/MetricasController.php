@@ -51,14 +51,14 @@ class MetricasController extends Controller
         if($request->seleccion == 1){
             $usuarios = $this->showUsersTrained($request);
 
-            \Excel::create('users', function($excel) use ($usuarios)  {
-                $excel->sheet('Sheet 1', function($sheet) use ($usuarios){
+            \Excel::create('Usuarios_Certificados', function($excel) use ($usuarios)  {
+                $excel->sheet('Hoja 1', function($sheet) use ($usuarios){
                     $export = [
                         'Rut' => [],
                         'Nombre' => [],
                         'Laboratorio' => []
                     ];
-                    $sheet->loadView('metricas.adminMaterial.tables.user_table_excel', ['usuarios' => $usuarios, 'cretificado' =>true]);
+                    $sheet->loadView('metricas.adminMaterial.tables.user_table_excel', ['usuarios' => $usuarios, 'certificado' =>true]);
                     $sheet->freezeFirstRow();
                 });
             })->export('xls');
@@ -66,8 +66,8 @@ class MetricasController extends Controller
         if($request->seleccion == 2){
             $recintos = $this->showLabs($request);
 
-            \Excel::create('users', function($excel) use ($recintos)  {
-                $excel->sheet('Sheet 1', function($sheet) use ($recintos){
+            \Excel::create('Sesiones_por_Recinto', function($excel) use ($recintos)  {
+                $excel->sheet('Hoja 1', function($sheet) use ($recintos){
                     $export = [
                         'Rut' => [],
                         'Nombre' => [],
@@ -82,8 +82,8 @@ class MetricasController extends Controller
         if($request->seleccion == 3){
             $usuarios = $this->showUsers($request);
 
-            \Excel::create('users', function($excel) use ($usuarios)  {
-                $excel->sheet('Sheet 1', function($sheet) use ($usuarios){
+            \Excel::create('Usuarios_Registrados', function($excel) use ($usuarios)  {
+                $excel->sheet('Hoja 1', function($sheet) use ($usuarios){
                     $export = [
                         'Rut' => [],
                         'Nombre' => [],
@@ -100,6 +100,9 @@ class MetricasController extends Controller
     private function showUsersTrained($request)
     {
         $result['usuarios'] = AvanceCursos::with('usuario.lab')->capacitados();
+        if($request->has('ano') && $request->ano > 0){
+            $result['usuarios'] = $result['usuarios']->whereRaw("YEAR(fecha_inicio)",$request->ano);
+        }
         if( !(empty($request->fecha_inicio) && empty($request->fecha_termino)) ){
             $termino = \DateTime::createFromFormat('d/m/Y', $request->fecha_termino)->format('Y-m-d');
             $inicio = \DateTime::createFromFormat('d/m/Y', $request->fecha_inicio)->format('Y-m-d');
@@ -126,6 +129,11 @@ class MetricasController extends Controller
         }
         if($request->has('recinto')) {
             $result['recintos'] = $result['recintos']->where('id', $request->recinto);
+        }
+        if($request->has('ano') && $request->ano > 0){
+            $result['recintos'] = $result['recintos']->whereHas('sesiones', function ($query) use ($request) {
+                $query->whereRaw("YEAR(fecha_session) = $request->ano");
+            });
         }
         if( ($request->has('fecha_inicio') || $request->has('fecha_termino')) || !(empty($request->fecha_inicio) && empty($request->fecha_termino)) ) {
             $termino = \DateTime::createFromFormat('d/m/Y', $request->fecha_termino)->format('Y-m-d');
