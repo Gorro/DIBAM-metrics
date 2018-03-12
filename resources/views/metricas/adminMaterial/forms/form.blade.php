@@ -9,7 +9,7 @@
             </select>
         </div>
         <div class="col animated fadeIn">
-            <select id="region" name="region" class="mdb-select" onchange="getLabs($(this).val())">
+            <select id="region" name="region" class="mdb-select" onchange="app.getLabs($(this).val())">
                 <option value="" disabled selected>Regiones</option>
                 @foreach ($regiones as $lab)
                     <option value="{{$lab->region}}">{{$lab->region}}</option>
@@ -45,6 +45,39 @@
         </div>
     </div>
 </form>
+<canvas id="piechart"></canvas>
 <div id="table_search" class="col-12">
     @include('metricas.adminMaterial.tables.table')
 </div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-notify modal-info" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <p class="heading lead">Modal Info</p>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" class="white-text">×</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+
+            </div>
+
+
+            <div class="modal-footer">
+                <a type="button" class="btn btn-info waves-effect waves-light" data-dismiss="modal">Cerrar
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+app.dataChart = {!! $chart !!};
+</script>

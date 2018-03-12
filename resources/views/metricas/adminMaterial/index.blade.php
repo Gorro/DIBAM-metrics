@@ -86,7 +86,7 @@
                         <h4>Usuarios Certificados</h4>
                         <hr>
                         <!--Quotation-->
-                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="ver(1)">Ver</button></div>
+                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="app.ver(1)">Ver</button></div>
                     </div>
                 </div>
                 <!--/.Card-->
@@ -106,7 +106,7 @@
                         <h4>Sesiones de usuarios</h4>
                         <hr>
                         <!--Quotation-->
-                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="ver(2)">Ver</button></div>
+                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="app.ver(2)">Ver</button></div>
                     </div>
                 </div>
                 <!--/.Card-->
@@ -126,7 +126,7 @@
                         <h4>Usuarios Registrados</h4>
                         <hr>
                         <!--Quotation-->
-                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="ver(3)">Ver</button></div>
+                        <div class="text-center"><button type="button" class="btn btn-primary" onclick="app.ver(3)">Ver</button></div>
                     </div>
                 </div>
                 <!--/.Card-->
@@ -152,143 +152,21 @@
 <script type="text/javascript" src="{{ asset('js/locales/bootstrap-datepicker.es.js') }}" charset="UTF-8"></script>
 <script type="text/javascript" src="{{ asset('js/datatable.options.js') }}" charset="UTF-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
 
 <!-- MDB DataTables -->
 <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
 
+<script src="{{ asset('js/app.js') }}"></script>
+
 
 <script>
-    load = $('#load');
-    load.hide();
-    var dataTable = '';
-
-    var ver = function($tipo){
-        load.show();
-        $('#index').addClass('animated fadeOut');
-        setTimeout(
-            function(){
-                $('#index').hide();
-                $.ajax({
-                    url:"{{url('/form')}}",
-                    type: 'GET',
-                    data : {seleccion : $tipo},
-                    success: function (view) {
-                        load.hide();
-                        $('#formAjax').css('margin-top','5vh')
-                        $('#form').html(view);
-                        $('#selecciona').val($('#seleccion').val());
-                        $('select').addClass('mdb-select');
-                        $('.mdb-select').material_select();
-                        dataTable = $('#example').DataTable(optionsDataTable);
-                        $('.dataTables_wrapper').find('label').each(function() {
-                            $(this).parent().append($(this).children());
-                        });
-                        $('.datepicker').datepicker({
-                            language:'es',
-                            autoclose:true,
-                            format: 'dd/mm/yyyy'
-                        }).on('changeDate', function(ev){
-                            moment.locale('es');
-                            var startDate = moment( $('#startDate').val(), 'DD/MM/YYYY' ).toDate();
-                            if (ev.date.valueOf() < startDate.valueOf()){
-                                $('#endDate').val('');
-                            }
-                        });
-                        $('#search').submit(function(e){
-                            e.preventDefault();
-                            getSearch($(this));
-                        });
-
-                        exportExcel($('#search'));
-                        formFunctions();
-                    },
-                    error: function (data) {
-                        //
-                    }
-                });
-            }, 1000);
-    }
-
-    var getLabs = function($region){
-        $('html, body').css({
-            overflow: 'hidden',
-            height: '100%'
-        });
-        load.show();
-        recintos = $('#recintos');
-        $.ajax({
-            type:'GET',
-            data : {region:$region},
-            url: "{{url('/getLabs')}}",
-            success: function(result){
-                load.hide();
-                $('html, body').css({
-                    overflow: '',
-                    height: ''
-                });
-                recintos.material_select("destroy");
-                recintos.find('option').remove();
-                recintos.append('<option value="" disabled selected>Recintos</option>');
-                $.each(result, function (i, item) {
-                    $('#recintos').append($('<option>', {
-                        value: item.id,
-                        text : item.laboratorio
-                    }));
-                });
-                $("#recintos").material_select();
-            }
-        })
-    }
-
-    var getSearch = function($form){
-        if($('#startDate').val() != '' && $('#endDate').val() == ''){
-            toastr.error('Debe seleccionar la fecha de termino');
-            return false;
-        } else if($('#startDate').val() == '' && $('#endDate').val() != ''){
-            toastr.error('Debe seleccionar la fecha de inicio');
-            return false;
-        }
-        load.show();
-        dataTable.destroy();
-        $('#table_search').html('');
-        $.ajax({
-            url:"{{url('/getUsers')}}",
-            type: 'GET',
-            data : $form.serialize(),
-            success: function (view) {
-                $('#table_search').html(view);
-                load.hide();
-                dataTable = $('#example').DataTable(optionsDataTable);
-                exportExcel($form);
-            }
-        });
-    }
-
-    var exportExcel = function($form){
-        var url = "{{url('/eportexcel')}}?"+$form.serialize();
-        $('#excel').attr('href',url);
-        $('#excel').trigger('click');
-    }
-
-    var formFunctions = function(){
-        $('#selecciona').change(function(){
-           if($(this).val() == 3){
-               $('#startDate, #endDate').addClass('d-none').val('');
-               $('#ano').val(0).material_select('destroy');
-           } else if($('#ano').val() == 0){
-               $('#startDate, #endDate').removeClass('d-none');
-               $('#ano').material_select();
-           }
-        });
-        $('#ano').change(function(){
-           if($(this).val() != 0){
-               $('#startDate, #endDate').addClass('d-none').val('');
-           } else {
-               $('#startDate, #endDate').removeClass('d-none');
-           }
-        });
-    }
+    app.init();
+    app.urlVer = "{{url('/form')}}";
+    app.urLabs = "{{url('/getLabs')}}";
+    app.urlUsers = "{{url('/getUsers')}}";
+    app.urlExcel = "{{url('/eportexcel')}}?";
 </script>
 </body>
 

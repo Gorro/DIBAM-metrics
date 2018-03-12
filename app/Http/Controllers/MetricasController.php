@@ -20,13 +20,16 @@ class MetricasController extends Controller
         $sesionesUsuario = LaboratoriosBiblioredes::with('sesiones')->get();
         $totalUsuarios = UsuarioRecintos::count();
         $cantidadSesiones = 0;
+        $recintos = [];
+
+
         foreach ($sesionesUsuario as $recinto) {
             $cantidad = count($recinto->sesiones);
             if($cantidad >0 ) {
                 $cantidadSesiones += count($recinto->sesiones);
             }
         }
-        return view('metricas.adminMaterial.index',compact('capacitados','cantidadSesiones', 'totalUsuarios'));
+        return view('metricas.adminMaterial.index',compact('capacitados','cantidadSesiones', 'totalUsuarios' , 'recintos'));
     }
 
     public function form(Request $request)
@@ -39,7 +42,8 @@ class MetricasController extends Controller
     public function getUsers(Request $request)
     {
         $result = $this->search($request);
-        return view('metricas.adminMaterial.tables.table',$result);
+
+        return response()->json(['view' => view('metricas.adminMaterial.tables.table',$result)->render(),'chart' => $result['chart']]);
     }
 
     public function getLabs(Request $request){
@@ -101,7 +105,7 @@ class MetricasController extends Controller
     {
         $result['usuarios'] = AvanceCursos::with('usuario.lab')->capacitados();
         if($request->has('ano') && $request->ano > 0){
-            $result['usuarios'] = $result['usuarios']->whereRaw("YEAR(fecha_inicio)",$request->ano);
+            $result['usuarios'] = $result['usuarios']->whereRaw("YEAR(fecha_inicio) = $request->ano");
         }
         if( !(empty($request->fecha_inicio) && empty($request->fecha_termino)) ){
             $termino = \DateTime::createFromFormat('d/m/Y', $request->fecha_termino)->format('Y-m-d');
@@ -172,14 +176,44 @@ class MetricasController extends Controller
         ];
         if($request->seleccion == 1){
             $result['usuarios'] = $this->showUsersTrained($request);
+            $chart = [];
+            foreach ($result['usuarios'] as $usuario){
+                if(!is_null($usuario->usuario)){
+                    $key = $usuario->usuario->lab->laboratorio;
+                    if(isset($chart["$key"])){
+                        $chart["$key"] += 1;
+                    } else {
+                        $chart["$key"] = 1;
+                    }
+                }
+            }
+            $result['chart'] = json_encode($chart);
         }
         if ( $request->seleccion == 2){
             $result['recintos'] = $this->showLabs($request);
             $result['user'] = false;
+            foreach ( $result['recintos'] as $recinto ) {
+                $cantidad = count($recinto->sesiones);
+                if ($cantidad > 0){
+                    $chart[$recinto->laboratorio] = $cantidad;
+                }
+            }
+            $result['chart'] = json_encode($chart);
         }
         if($request->seleccion == 3){
             $result['usuarios'] = $this->showUsers($request);
             $result['certificado'] = false;
+            foreach ($result['usuarios'] as $usuario){
+                if(!is_null($usuario)){
+                    $key = $usuario->lab->laboratorio;
+                    if(isset($chart["$key"])){
+                        $chart["$key"] += 1;
+                    } else {
+                        $chart["$key"] = 1;
+                    }
+                }
+            }
+            $result['chart'] = json_encode($chart);
         }
         return $result;
     }
