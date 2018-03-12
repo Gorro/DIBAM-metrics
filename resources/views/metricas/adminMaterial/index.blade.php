@@ -62,12 +62,12 @@
 </head>
 
 <body>
-<div id="load" class="row h-100 justify-content-center align-items-center"><img src="images/ajax-loader2.gif" alt=""></div>
+<div id="load" class="row h-100 justify-content-center align-items-center"><img src="images/ajax-loader2.gif" alt="" ></div>
 <!-- Start your project here-->
 <div class="container">
     <div class="row">
         <div class="">
-            <img src="images/biblioredes.jpg" width="200" id="img" >
+            <img src="images/biblioredes.jpg" width="200" id="img" onclick="location.href='{{ url('/') }}';" style="cursor: pointer;">
         </div>
     </div>
     <div id="index" class="row align-items-center" style="height: 85vh;">
