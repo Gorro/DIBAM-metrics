@@ -14,7 +14,7 @@
     <!-- Your custom styles (optional) -->
     <link href="{{ asset('css/mdb-style-admin.css') }}" rel="stylesheet">
     {{--<link href="{{ asset('mdb/css/style.css') }}" rel="stylesheet">--}}
-    <link href="{{ asset('css/datepicker.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap-datepicker.min.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css"/>
 
@@ -148,7 +148,7 @@
 <script type="text/javascript" src="{{ asset('mdb/js/bootstrap.min.js')}}"></script>
 <!-- MDB core JavaScript -->
 <script type="text/javascript" src="{{ asset('mdb/js/mdb.min.js')}}"></script>
-<script type="text/javascript" src="{{ asset('js/bootstrap-datepicker.js')}}"></script>
+<script type="text/javascript" src="{{ asset('js/bootstrap-datepicker.min.js')}}"></script>
 <script type="text/javascript" src="{{ asset('js/locales/bootstrap-datepicker.es.js') }}" charset="UTF-8"></script>
 <script type="text/javascript" src="{{ asset('js/datatable.options.js') }}" charset="UTF-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>

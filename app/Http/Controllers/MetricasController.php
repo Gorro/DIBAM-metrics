@@ -108,9 +108,9 @@ class MetricasController extends Controller
             $result['usuarios'] = $result['usuarios']->whereRaw("YEAR(fecha_inicio) = $request->ano");
         }
         if( !(empty($request->fecha_inicio) && empty($request->fecha_termino)) ){
-            $termino = \DateTime::createFromFormat('d/m/Y', $request->fecha_termino)->format('Y-m-d');
-            $inicio = \DateTime::createFromFormat('d/m/Y', $request->fecha_inicio)->format('Y-m-d');
-            $result['usuarios'] = $result['usuarios']->whereRaw("DATE(fecha_inicio) BETWEEN '$inicio' and '$termino'");
+            $termino = \DateTime::createFromFormat('m/Y', $request->fecha_termino)->format('Y-m');
+            $inicio = \DateTime::createFromFormat('m/Y', $request->fecha_inicio)->format('Y-m');
+            $result['usuarios'] = $result['usuarios']->whereRaw("DATE_FORMAT(fecha_inicio,'%Y-%m') BETWEEN '$inicio' and '$termino'");
         }
         if($request->has('region')){
             $result['usuarios'] = $result['usuarios']->whereHas('usuario.lab',function($query) use ($request){
@@ -140,10 +140,10 @@ class MetricasController extends Controller
             });
         }
         if( ($request->has('fecha_inicio') || $request->has('fecha_termino')) || !(empty($request->fecha_inicio) && empty($request->fecha_termino)) ) {
-            $termino = \DateTime::createFromFormat('d/m/Y', $request->fecha_termino)->format('Y-m-d');
-            $inicio = \DateTime::createFromFormat('d/m/Y', $request->fecha_inicio)->format('Y-m-d');
+            $termino = \DateTime::createFromFormat('m/Y', $request->fecha_termino)->format('Y-m');
+            $inicio = \DateTime::createFromFormat('m/Y', $request->fecha_inicio)->format('Y-m');
             $result['recintos'] = $result['recintos']->whereHas('sesiones', function ($query) use ($inicio, $termino) {
-                $query->whereRaw("DATE(fecha_session) BETWEEN '$inicio' and '$termino'");
+                $query->whereRaw("DATE_FORMAT(fecha_session,'%Y-%m') BETWEEN '$inicio' and '$termino'");
             });
         }
         return $result['recintos']->get();
@@ -192,6 +192,7 @@ class MetricasController extends Controller
         if ( $request->seleccion == 2){
             $result['recintos'] = $this->showLabs($request);
             $result['user'] = false;
+            $chart = [];
             foreach ( $result['recintos'] as $recinto ) {
                 $cantidad = count($recinto->sesiones);
                 if ($cantidad > 0){

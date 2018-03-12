@@ -31,12 +31,12 @@
         </div>
         <div class="col animated fadeIn">
             <div class="md-form">
-                <input placeholder="Fecha Inicio" name="fecha_inicio" type="text" id="startDate" class="form-control datepicker @if($seleccion == 3) d-none @endif">
+                <input placeholder="Fecha Inicio" name="fecha_inicio" type="text" id="startDate" class="form-control from @if($seleccion == 3) d-none @endif">
             </div>
         </div>
         <div class="col animated fadeIn">
             <div class="md-form">
-                <input placeholder="Fecha Termino" type="text" name="fecha_termino" id="endDate" class="form-control datepicker @if($seleccion == 3) d-none @endif">
+                <input placeholder="Fecha Termino" type="text" name="fecha_termino" id="endDate" class="form-control to @if($seleccion == 3) d-none @endif">
             </div>
         </div>
         <div class="clear-fix"></div>

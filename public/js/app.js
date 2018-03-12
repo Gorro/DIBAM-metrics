@@ -36,17 +36,8 @@ var app = {
                             $(this).parent().append($(this).children());
                         });
 
-                        $('.datepicker').datepicker({
-                            language:'es',
-                            autoclose:true,
-                            format: 'dd/mm/yyyy'
-                        }).on('changeDate', function(ev){
-                            moment.locale('es');
-                            var startDate = moment( $('#startDate').val(), 'DD/MM/YYYY' ).toDate();
-                            if (ev.date.valueOf() < startDate.valueOf()){
-                                $('#endDate').val('');
-                            }
-                        });
+                        app.loadDatePicker();
+
                         $('#search').submit(function(e){
                             e.preventDefault();
                             app.getSearch($(this));
@@ -54,7 +45,9 @@ var app = {
 
                         app.exportExcel($('#search'));
                         app.formFunctions();
-                        app.charts();
+                        if(app.dataChart != ''){
+                            app.charts();
+                        }
                     },
                     error: function (data) {
                         //
@@ -114,7 +107,9 @@ var app = {
                 app.dataChart = JSON.parse(data.chart);
                 app.dataTable = $('#example').DataTable(optionsDataTable);
                 app.exportExcel($form);
-                app.charts();
+                if(app.dataChart != ''){
+                    app.charts();
+                }
             }
         });
     },
@@ -141,26 +136,38 @@ var app = {
             }
         });
     },
-    drawChart : function() {
-        var piechart = new google.visualization.DataTable();
-        piechart.addColumn('string', 'Leyenda');
-        piechart.addColumn('number', 'Cantidad');
+    loadDatePicker: function(){
+        var startDate = new Date();
+        var fechaFin = new Date();
+        var FromEndDate = new Date();
+        var ToEndDate = new Date();
 
-        $.each( app.dataChart, function( key, value ) {
-            piechart.addRow([key,parseInt(value)]);
+
+
+
+        $('.from').datepicker({
+            language:'es',
+            autoclose: true,
+            minViewMode: 1,
+            format: 'mm/yyyy',
+            weekStart: 1
+        }).on('changeDate', function(selected){
+            startDate = new Date(selected.date.valueOf());
+            startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+            $('.to').datepicker('setStartDate', startDate);
         });
 
-        var options = {
-            title: 'My Daily Activities'
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
-        chart.draw(piechart, options);
-    },
-    verGrefico: function(){
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(app.drawChart());
+        $('.to').datepicker({
+            language:'es',
+            autoclose: true,
+            minViewMode: 1,
+            format: 'mm/yyyy',
+            weekStart: 1
+        }).on('changeDate', function(selected){
+            FromEndDate = new Date(selected.date.valueOf());
+            FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
+            $('.from').datepicker('setEndDate', FromEndDate);
+        });
     },
     charts : function(){
         var $data = [];
